@@ -11,7 +11,8 @@ import { HumiditySensorsService } from './humidity-sensors.service.js';
 import { CreateHumiditySensorDto } from './dto/create-humidity-sensor.dto.js';
 import { UpdateHumiditySensorDto } from './dto/update-humidity-sensor.dto.js';
 
-@Controller('humidity-sensors')
+// Підтримуємо '/humidity-sensors' (ЛР1 та код клієнта) і '/sensor2' (текст Кроку 4 ЛР3 для Sensor 2)
+@Controller(['humidity-sensors', 'sensor2'])
 export class HumiditySensorsController {
   constructor(private readonly sensorsService: HumiditySensorsService) {}
 

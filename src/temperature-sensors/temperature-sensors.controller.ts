@@ -11,8 +11,8 @@ import { TemperatureSensorsService } from './temperature-sensors.service.js';
 import { CreateTemperatureSensorDto } from './dto/create-temperature-sensor.dto.js';
 import { UpdateTemperatureSensorDto } from './dto/update-temperature-sensor.dto.js';
 
-// '/sensors' — маршрут з ЛР1, '/temperature-sensors' — маршрут, який використовує клієнт (ЛР3)
-@Controller(['sensors', 'temperature-sensors'])
+// Підтримуємо всі варіанти адрес: '/sensors' (ЛР1), '/temperature-sensors' (приклад з коду ЛР3), '/sensor1' (текст Кроку 4 ЛР3)
+@Controller(['sensors', 'temperature-sensors', 'sensor1'])
 export class TemperatureSensorsController {
   constructor(private readonly sensorsService: TemperatureSensorsService) {}
 
