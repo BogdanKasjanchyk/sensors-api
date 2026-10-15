@@ -1,0 +1,17 @@
+# Render Blueprint (необов'язково): дозволяє створити Web Service через
+# New + → Blueprint. Ці ж значення можна ввести вручну в New + → Web Service.
+services:
+  - type: web
+    name: sensors-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Після розгортання фронтенду можна задати домен Vercel, щоб обмежити CORS
+      # - key: FRONTEND_URL
+      #   value: https://<your-app>.vercel.app

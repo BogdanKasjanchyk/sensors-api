@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "sensors-api (Lab 3, Render)",
+    "description": "Перевірка розгорнутого на Render API. Перед використанням замініть змінну колекції baseUrl на публічну адресу вашого сервісу (https://<ім'я>.onrender.com). Перший запит може тривати до ~1 хв — безкоштовний план Render 'присипляє' сервіс.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://sensors-api.onrender.com" }
+  ],
+  "item": [
+    {
+      "name": "1. Wake up / Hello World (GET /)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Hello World', () => pm.expect(pm.response.text()).to.include('Hello World'));"
+            ]
+          }
+        }
+      ],
+      "request": { "method": "GET", "url": "{{baseUrl}}/" }
+    },
+    {
+      "name": "2. Sensor 1 — get temperature readings (GET)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Is array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ],
+      "request": { "method": "GET", "url": "{{baseUrl}}/temperature-sensors" }
+    },
+    {
+      "name": "3. Sensor 1 — add temperature reading (POST)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Випадкове значення 20–26 °C, щоб кожен запуск додавав нову точку на графік",
+              "pm.variables.set('tempValue', (20 + Math.random() * 6).toFixed(1));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 201', () => pm.response.to.have.status(201));",
+              "const json = pm.response.json();",
+              "pm.test('Has id and timestamp', () => { pm.expect(json.id).to.be.a('string'); pm.expect(json.timestamp).to.be.a('string'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensorName\": \"Sensor A\",\n  \"value\": {{tempValue}},\n  \"unit\": \"°C\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/temperature-sensors"
+      }
+    },
+    {
+      "name": "4. Sensor 2 — get humidity readings (GET)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Is array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ],
+      "request": { "method": "GET", "url": "{{baseUrl}}/humidity-sensors" }
+    },
+    {
+      "name": "5. Sensor 2 — add humidity reading (POST)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Випадкове значення 40–60 %, щоб кожен запуск додавав нову точку на графік",
+              "pm.variables.set('humValue', (40 + Math.random() * 20).toFixed(1));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 201', () => pm.response.to.have.status(201));",
+              "const json = pm.response.json();",
+              "pm.test('Has id and timestamp', () => { pm.expect(json.id).to.be.a('string'); pm.expect(json.timestamp).to.be.a('string'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensorName\": \"Sensor B\",\n  \"value\": {{humValue}},\n  \"unit\": \"%\",\n  \"location\": \"Lab 301\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/humidity-sensors"
+      }
+    }
+  ]
+}
