@@ -1,44 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import type { TemperatureSensor } from './entities/temperature-sensor.entity.js';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TemperatureSensor } from './entities/temperature-sensor.entity.js';
 import { CreateTemperatureSensorDto } from './dto/create-temperature-sensor.dto.js';
 import { UpdateTemperatureSensorDto } from './dto/update-temperature-sensor.dto.js';
 
 @Injectable()
 export class TemperatureSensorsService {
-  private sensors: TemperatureSensor[] = [];
+  constructor(
+    @InjectRepository(TemperatureSensor)
+    private readonly temperatureSensorRepository: Repository<TemperatureSensor>,
+  ) {}
 
-  create(createSensorDto: CreateTemperatureSensorDto): TemperatureSensor {
-    const sensor: TemperatureSensor = {
-      ...createSensorDto,
-      id: uuidv4(),
-      timestamp: new Date(),
-    };
-    this.sensors.push(sensor);
-    return sensor;
+  async create(createDto: CreateTemperatureSensorDto) {
+    const record = this.temperatureSensorRepository.create(createDto);
+    return await this.temperatureSensorRepository.save(record);
   }
 
-  findAll(): TemperatureSensor[] {
-    return this.sensors;
+  async findAll() {
+    return await this.temperatureSensorRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 50,
+    });
   }
 
-  findOne(id: string): TemperatureSensor {
-    const sensor = this.sensors.find((s) => s.id === id);
-    if (!sensor) throw new NotFoundException(`sensor with id ${id} not found`);
-    return sensor;
+  async findOne(id: string) {
+    const record = await this.temperatureSensorRepository.findOneBy({ id });
+    if (!record) throw new NotFoundException(`sensor with id ${id} not found`);
+    return record;
   }
 
-  update(
-    id: string,
-    updateSensorDto: UpdateTemperatureSensorDto,
-  ): TemperatureSensor {
-    const sensor = this.findOne(id);
-    Object.assign(sensor, updateSensorDto);
-    return sensor;
+  async update(id: string, updateDto: UpdateTemperatureSensorDto) {
+    const record = await this.findOne(id);
+    this.temperatureSensorRepository.merge(record, updateDto);
+    return await this.temperatureSensorRepository.save(record);
   }
 
-  remove(id: string): void {
-    const sensor = this.findOne(id);
-    this.sensors = this.sensors.filter((s) => s.id !== sensor.id);
+  async remove(id: string) {
+    const record = await this.findOne(id);
+    await this.temperatureSensorRepository.remove(record);
   }
 }

@@ -16,8 +16,10 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.FRONTEND_URL || '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
   // На Render порт задається через process.env.PORT. Локально використовуємо 3001, щоб не конфліктувати з Next.js (порт 3000).
   await app.listen(process.env.PORT ?? 3001);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 await bootstrap();

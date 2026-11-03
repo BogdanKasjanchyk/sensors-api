@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { HumiditySensorsService } from './humidity-sensors.service.js';
 import { CreateHumiditySensorDto } from './dto/create-humidity-sensor.dto.js';
@@ -27,20 +28,20 @@ export class HumiditySensorsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.sensorsService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSensorDto: UpdateHumiditySensorDto,
   ) {
     return this.sensorsService.update(id, updateSensorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.sensorsService.remove(id);
   }
 }

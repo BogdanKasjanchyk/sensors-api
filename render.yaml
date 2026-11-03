@@ -12,6 +12,17 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # Параметри БД: значення вводяться в Render → Environment, а не в репозиторії
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
       # Після розгортання фронтенду можна задати домен Vercel, щоб обмежити CORS
       # - key: FRONTEND_URL
       #   value: https://<your-app>.vercel.app
